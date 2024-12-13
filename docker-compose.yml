@@ -1,0 +1,16 @@
+services:
+  three60:
+    image: three60:latest
+    ports:
+      - 3000:3000
+    environment:
+      - DATABASE_URL=mysql://root:my-pwd@db:3306/three60
+      - ENABLE_REGISTER=true
+      - ALLOWABLE_DOMAINS=example.com
+      - INIT_DB=true
+  
+  db:
+    image: docker.io/mariadb:latest
+    environment:
+      - MARIADB_ROOT_PASSWORD=my-pwd
+      - MARIADB_DATABASE=three60

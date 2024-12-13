@@ -1,4 +1,3 @@
-import { encodeBase32LowerCaseNoPadding } from '@oslojs/encoding';
 import { db } from '../../db';
 import { sessions } from '../../db/schema';
 import { eq, lt } from 'drizzle-orm';

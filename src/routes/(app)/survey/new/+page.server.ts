@@ -45,7 +45,7 @@ export const actions = {
             error(400, 'At least one skill is required');
         }
 
-        const ids = await db.insert(surveysTable).values({ title, description, owner }).returning({ id: surveysTable.id });
+        const ids = await db.insert(surveysTable).values({ title, description, owner }).$returningId();
 
         const surveyId = ids[0].id;
         for (const participant of participants) {

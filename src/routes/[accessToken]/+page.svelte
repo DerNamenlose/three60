@@ -10,7 +10,8 @@
 			id: skill.id.toString(),
 			title: skill.title,
 			description: skill.description,
-			value: 0
+			value: 0,
+			noAnswer: false
 		}))
 	);
 </script>
@@ -27,13 +28,15 @@
 	<button type="submit" class="mt-5 w-40 bg-slate-200">Submit</button>
 </form>
 
-<dl class="ml-8 mt-5 grid grid-cols-[2rem_1fr] text-sm">
-	<dt class="font-semibold">0</dt>
-	<dd>The person does not have this skill or I can't answer.</dd>
-	<dt class="font-semibold">1</dt>
+<dl class="ml-8 mt-5 grid grid-cols-[7rem_1fr] text-sm">
+	<dt class="text-center font-semibold">(No answer)</dt>
+	<dd>I don't know and can't give useful answer.</dd>
+	<dt class="text-center font-semibold">0</dt>
+	<dd>The person does not have this skill.</dd>
+	<dt class="text-center font-semibold">1</dt>
 	<dd>The person can use this skill with guidance by more experienced people.</dd>
-	<dt class="font-semibold">2</dt>
+	<dt class="text-center font-semibold">2</dt>
 	<dd>The person is able to use this skill by themselves.</dd>
-	<dt class="font-semibold">3</dt>
+	<dt class="text-center font-semibold">3</dt>
 	<dd>The person is able to guide others to use this skill.</dd>
 </dl>

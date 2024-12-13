@@ -56,7 +56,7 @@ export const actions = {
 
         const formData = await request.formData();
         // validate that the form doesn't contain invalid skill IDs
-        const skillEntries = [...formData.entries()];
+        const skillEntries = [...formData.entries()].filter(([key, _]) => key.startsWith('disable-'));
         const allIdsValid = skillEntries.every(([key, _]) => skills.some(skill => skill.id.toString() === key));
         if (!allIdsValid || skillEntries.length !== skills.length) {
             error(400, 'Invalid skill ID');

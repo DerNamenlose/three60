@@ -1,12 +1,21 @@
 <script lang="ts">
 	let password = $state('');
 	let password_repeat = $state('');
+
+	const { data } = $props();
 </script>
 
 <h1 class="text-3xl">Register a new Account</h1>
 <div>
 	<form class="grid grid-cols-2 gap-1" method="POST">
-		<label for="name" class="justify-self-end">Email address</label>
+		<label for="name" class="justify-self-end"
+			><div>Email address</div>
+			{#if data.allowableDomains}
+				<div class="text-xs text-slate-500">
+					Allowed domains: {data.allowableDomains}
+				</div>
+			{/if}
+		</label>
 		<input type="email" name="email" id="email" class="justify-self-start" required />
 		<label for="password" class="justify-self-end">Password</label>
 		<input

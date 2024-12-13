@@ -1,41 +1,41 @@
-import { index, int, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, int, primaryKey, mysqlTable, text, varchar, bigint } from "drizzle-orm/mysql-core";
 
-export const usersTable = sqliteTable("users_table", {
-    id: int().primaryKey({ autoIncrement: true }),
+export const usersTable = mysqlTable("users_table", {
+    id: int().autoincrement().primaryKey(),
     email: text().notNull().unique(),
     password_hash: text().notNull(),
 });
 
-export const sessions = sqliteTable("sessions", {
-    token: text().notNull().primaryKey(),
+export const sessions = mysqlTable("sessions", {
+    token: varchar({ length: 255 }).notNull().primaryKey(),
     userId: int().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
-    expires: int().notNull(),
+    expires: bigint({ mode: "number" }).notNull(),
 });
 
-export const surveysTable = sqliteTable("surveys_table", {
-    id: int().primaryKey({ autoIncrement: true }),
+export const surveysTable = mysqlTable("surveys_table", {
+    id: int().autoincrement().primaryKey(),
     title: text().notNull(),
     description: text(),
     owner: int().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
 });
 
-export const surveySkillsTable = sqliteTable("survey_skills_table", {
-    id: int().primaryKey({ autoIncrement: true }),
+export const surveySkillsTable = mysqlTable("survey_skills_table", {
+    id: int().autoincrement().primaryKey(),
     surveyId: int().notNull().references(() => surveysTable.id, { onDelete: "cascade" }),
     title: text().notNull(),
     description: text(),
 })
 
-export const surveyAccessTable = sqliteTable("survey_access_table", {
-    id: int().primaryKey({ autoIncrement: true }),
+export const surveyAccessTable = mysqlTable("survey_access_table", {
+    id: int().autoincrement().primaryKey(),
     surveyId: int().notNull().references(() => surveysTable.id, { onDelete: "cascade" }),
     recepientEmail: text().notNull(),
-    accessToken: text().notNull(),
+    accessToken: varchar({ length: 255 }).notNull(),
 }, (table) => ({
     tokenIndex: index("token_index").on(table.accessToken),
 }));
 
-export const surveyAnswersTable = sqliteTable("survey_answers_table", {
+export const surveyAnswersTable = mysqlTable("survey_answers_table", {
     participantId: int().notNull().references(() => surveyAccessTable.id, { onDelete: "cascade" }),
     skillId: int().notNull().references(() => surveySkillsTable.id, { onDelete: "cascade" }),
     rating: int().notNull(),

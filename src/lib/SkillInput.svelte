@@ -6,6 +6,7 @@
 		title: string;
 		description: string | null;
 		value: number;
+		noAnswer: boolean;
 	};
 	type Props = { skill: SkillProps };
 
@@ -29,8 +30,19 @@
 		bind:value={skill.value}
 		class="w-80 justify-self-start"
 		list="values"
+		disabled={skill.noAnswer}
 	/>
-	<span class="ml-2">{skill.value}</span>
+	<label class="ml-2 text-xs">
+		<input
+			type="checkbox"
+			name="disable-{skill.id}"
+			bind:checked={skill.noAnswer}
+			class="text-xs"
+		/> No answer</label
+	>
+	{#if !skill.noAnswer}
+		<span class="ml-2">{skill.value}</span>
+	{/if}
 </div>
 <datalist id="values">
 	<option value="0" label="0"></option>
