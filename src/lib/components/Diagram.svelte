@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { scaleBand } from 'd3-scale';
-	import { curveLinearClosed } from 'd3-shape';
+	import { curveLinear, curveLinearClosed } from 'd3-shape';
 	import { flatGroup } from 'd3-array';
 	import { Axis, Chart, Points, Spline, Svg } from 'layerchart';
 
@@ -10,23 +10,29 @@
 		data: { skill: string; participant: number; rating: number | undefined }[];
 	} = $props();
 
-	const averageValues = flatGroup(data, (d) => d.skill).map(([skill, ratings]) => {
-		const actualRatings = ratings.filter((r) => r.rating !== undefined);
-		const avg = actualRatings.reduce((a, b) => a + (b.rating ?? 0), 0) / actualRatings.length;
-		return { skill, rating: avg };
-	});
+	const averageValues = flatGroup(data, (d) => d.skill)
+		.map(([skill, ratings]) => {
+			const actualRatings = ratings.filter((r) => r.rating !== undefined);
+			const avg = actualRatings.reduce((a, b) => a + (b.rating ?? 0), 0) / actualRatings.length;
+			return { skill, rating: avg };
+		})
+		// .filter((d) => !isNaN(d.rating));
+		.map((d) => ({
+			...d,
+			rating: isNaN(d.rating) ? undefined : d.rating
+		}));
 
 	const colors = [
-		'stroke-slate-300',
-		'stroke-violet-300',
-		'stroke-red-300',
-		'stroke-lime-300',
-		'stroke-blue-300',
-		'stroke-amber-300',
-		'stroke-stone-300',
-		'stroke-emerald-300',
-		'stroke-cyan-300',
-		'stroke-pink-300'
+		{ stroke: 'stroke-slate-300', fill: 'fill-slate-400' },
+		{ stroke: 'stroke-violet-300', fill: 'fill-violet-400' },
+		{ stroke: 'stroke-red-300', fill: 'fill-red-400' },
+		{ stroke: 'stroke-lime-300', fill: 'fill-lime-400' },
+		{ stroke: 'stroke-blue-300', fill: 'fill-blue-400' },
+		{ stroke: 'stroke-amber-300', fill: 'fill-amber-400' },
+		{ stroke: 'stroke-stone-300', fill: 'fill-stone-400' },
+		{ stroke: 'stroke-emerald-300', fill: 'fill-emerald-400' },
+		{ stroke: 'stroke-cyan-300', fill: 'fill-cyan-400' },
+		{ stroke: 'stroke-pink-300', fill: 'fill-pink-400' }
 	];
 </script>
 
@@ -51,13 +57,22 @@
 			<Axis placement="angle" grid={{ class: 'stroke-slate-950' }} />
 			{#each flatGroup(data, (d) => d.participant) as [participant, ratings], idx}
 				<Spline
+					data={[...ratings, ratings[0]]}
+					curve={curveLinear}
+					class="{colors[idx % colors.length].stroke} stroke-[2px]"
+				/>
+				<Points
 					data={ratings}
-					curve={curveLinearClosed}
-					class="{colors[idx % colors.length]} stroke-[2px]"
+					class="{colors[idx % colors.length].stroke} {colors[idx % colors.length]
+						.fill} stroke-[2px]"
 				/>
 			{/each}
-			<Spline data={averageValues} curve={curveLinearClosed} class="stroke-lime-600 stroke-[4px]" />
-			<!-- <Points class="fill-red-900 stroke-slate-950" /> -->
+			<Spline
+				data={[...averageValues, averageValues[0]]}
+				curve={curveLinear}
+				class="stroke-lime-600 stroke-[4px]"
+			/>
+			<Points data={averageValues} class="fill-lime-500 stroke-lime-600 stroke-[2px]" />
 		</Svg>
 	</Chart>
 </div>

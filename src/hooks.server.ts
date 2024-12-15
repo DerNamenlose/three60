@@ -2,10 +2,14 @@ import type { Handle } from "@sveltejs/kit";
 
 import { deleteSessionTokenCookie, setSessionTokenCookie, validateSession } from "./lib/session/session";
 
+import debug from 'debug';
+
+const log = debug('hooks');
+
 export const handle: Handle = async ({ event, resolve }) => {
     const token = event.cookies.get("session") ?? null;
     if (token === null) {
-        console.log("No session available")
+        log("No session available")
         event.locals.userId = null;
         event.locals.session = null;
         return resolve(event);

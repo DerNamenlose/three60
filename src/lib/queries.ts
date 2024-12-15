@@ -22,7 +22,7 @@ export async function loadSurvey(id: number, ownerId: number) {
             accessToken: participant.accessToken,
             answers: answers.filter(answer => answer.participantId === participant.id).map(answer => ({
                 skillId: answer.skillId,
-                rating: answer.rating
+                rating: answer.rating / 10 // convert back to original vallue. The DB stores integer values only to prevent rounding and matching errors
             }))
         })),
         skills: skills.map(skill => ({

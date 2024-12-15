@@ -8,17 +8,21 @@ import { error } from '@sveltejs/kit';
 import { verify } from '@node-rs/argon2';
 import { generateRandomToken } from '$lib/randomToken';
 
+import debug from 'debug';
+
+let log = debug('login');
+
 export const actions = {
     default: async (event) => {
         const formData = await event.request.formData();
         const email = formData.get('email')?.toString();
         const password = formData.get('password')?.toString();
         if (!email || !password) {
+            log('Email and password are required');
             error(400, 'Email and password are required');
         }
 
         const userCredentials = await db.select().from(usersTable).where(eq(usersTable.email, email));
-        console.log(userCredentials, formData.get('email'));
         if (userCredentials.length === 0) {
             error(403, 'Invalid credentials');
         }
@@ -38,6 +42,7 @@ export const actions = {
             }
         }
         else {
+            log('Invalid credentials for %s', email);
             error(403, 'Invalid credentials');
         }
     }
