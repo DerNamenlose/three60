@@ -38,7 +38,7 @@ CREATE TABLE `surveys_table` (
 --> statement-breakpoint
 CREATE TABLE `users_table` (
 	`id` int AUTO_INCREMENT NOT NULL,
-	`email` text NOT NULL,
+	`email` varchar(255) NOT NULL,
 	`password_hash` text NOT NULL,
 	CONSTRAINT `users_table_id` PRIMARY KEY(`id`),
 	CONSTRAINT `users_table_email_unique` UNIQUE(`email`)
