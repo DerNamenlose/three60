@@ -25,7 +25,7 @@
 			name="participants"
 			id="participants"
 			class="justify-self-start"
-			value={data?.participants?.[idx].email}
+			value={data?.participants?.[idx]?.email}
 		/>
 	{/each}
 	<button
