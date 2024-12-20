@@ -1,4 +1,6 @@
 <script lang="ts">
+	import markdownIt from 'markdown-it';
+
 	import InfoIcon from './components/icons/InfoIcon.svelte';
 
 	export type SkillProps = {
@@ -11,6 +13,10 @@
 	type Props = { skill: SkillProps };
 
 	let { skill = $bindable() }: Props = $props();
+
+	const md = markdownIt();
+
+	let description = $state(md.render(skill.description ?? ''));
 </script>
 
 <label for={skill.id} class="justify-self-end"
@@ -57,5 +63,21 @@
 	class="border border-slate-400 p-4 backdrop:bg-black/30 backdrop:backdrop-blur-sm"
 >
 	<h2 class="mb-2 text-2xl">{skill.title}</h2>
-	<p>{skill.description}</p>
+	<p class="markdown text-left">{@html description}</p>
 </div>
+
+<style>
+	.markdown {
+		:global(ul) {
+			list-style-type: disc;
+			margin-left: 1rem;
+		}
+		:global(ol) {
+			list-style-type: decimal;
+			margin-left: 1rem;
+		}
+		:global(a) {
+			color: blue;
+		}
+	}
+</style>
