@@ -45,6 +45,7 @@
 		"@oslojs/encoding": "^1.1.0",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
+		"@zerodevx/svelte-toast": "^0.9.6",
 		"d3-array": "^3.2.4",
 		"d3-scale": "^4.0.2",
 		"d3-shape": "^3.2.0",

@@ -9,6 +9,7 @@
 	import type { PageData } from './$types';
 	import TrashIcon from '$lib/components/icons/TrashIcon.svelte';
 	import { goto } from '$app/navigation';
+	import { success } from '$lib/toast';
 
 	let { data }: { data: PageData } = $props();
 
@@ -75,7 +76,10 @@
 				aria-label="Copy link to clipboard"
 				class="text-sky-700"
 				title="Copy link to clipboard"
-				onclick={() => copyLinkToClipboard(`${window.location.origin}/${participant.accessToken}`)}
+				onclick={() => {
+					copyLinkToClipboard(`${window.location.origin}/${participant.accessToken}`);
+					success('Link copied to clipboard');
+				}}
 			>
 				<LinkIcon />
 			</button>

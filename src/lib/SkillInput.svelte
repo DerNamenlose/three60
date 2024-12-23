@@ -22,7 +22,7 @@
 <label for={skill.id} class="justify-self-end"
 	>{skill.title}
 	<button popovertarget="description-{skill.id}" type="button" title="Show skill description"
-		><InfoIcon class="size-4 fill-lime-500" /></button
+		><InfoIcon class="size-4 fill-lime-600" /></button
 	></label
 >
 <div class="justify-self-start">
