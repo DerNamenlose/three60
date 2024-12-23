@@ -8,6 +8,20 @@
       "when": 1732727438120,
       "tag": "0000_harsh_warlock",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1734971924726,
+      "tag": "0001_lucky_proteus",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1734972757800,
+      "tag": "0002_sweet_mentallo",
+      "breakpoints": true
     }
   ]
 }

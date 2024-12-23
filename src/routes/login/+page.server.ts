@@ -26,6 +26,10 @@ export const actions = {
         if (userCredentials.length === 0) {
             error(403, 'Invalid credentials');
         }
+        if (userCredentials[0].verification_code) {
+            log('Email %s not yet verified', email);
+            error(403, "Your account is not yet verified");
+        }
         const isPasswordValid = await verify(userCredentials[0].password_hash, password);
         if (isPasswordValid) {
             // create the session

@@ -1,9 +1,11 @@
-import { index, int, primaryKey, mysqlTable, text, varchar, bigint } from "drizzle-orm/mysql-core";
+import { index, int, primaryKey, mysqlTable, text, varchar, bigint, date } from "drizzle-orm/mysql-core";
 
 export const usersTable = mysqlTable("users_table", {
     id: int().autoincrement().primaryKey(),
     email: text().notNull().unique(),
     password_hash: text().notNull(),
+    verification_code: varchar({ length: 255 }),
+    verifcationCodeExpires: date(),
 });
 
 export const sessions = mysqlTable("sessions", {

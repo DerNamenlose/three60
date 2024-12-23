@@ -1,37 +1,35 @@
-import { hash } from '@node-rs/argon2';
 import type { Actions, PageServerLoad } from './$types';
-import { usersTable } from '../../db/schema';
-import { db } from '../../db';
 import { error, redirect } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import { sendVerificationEmail } from '$lib/emails/verification';
+import { createNewUser } from '../../db/users';
+import type { Email, Password } from '$lib/types';
+import { config } from '$lib/configuration';
 
 export const load: PageServerLoad = () => {
     return {
-        allowableDomains: env.ALLOWABLE_DOMAINS
+        allowableDomains: config.allowableDomains
     }
 }
 
 export const actions = {
     default: async (event) => {
-        const allowedDomains = env.ALLOWABLE_DOMAINS?.split(',');
         const formData = await event.request.formData();
-        const email = formData.get('email')?.toString();
-        const password = formData.get('password')?.toString();
+        const email = formData.get('email')?.toString() as Email | undefined;
+        const password = formData.get('password')?.toString() as Password | undefined;
 
         if (!email || !password) {
             error(400, 'Email and password are required');
         }
 
-        if (allowedDomains && !allowedDomains?.some(domain => email.endsWith(domain))) {
+        if (config.allowableDomains && !config.allowableDomains?.some(domain => email.endsWith(domain))) {
             error(400, 'Invalid email domain');
         }
 
-        const hashedPassword = await hash(password);
+        const result = await createNewUser(email, password);
 
-        await db.insert(usersTable).values({
-            email,
-            password_hash: hashedPassword
-        });
+        if (result.verificationCode) {
+            sendVerificationEmail(email, result.verificationCode);
+        }
 
         redirect(303, '/login');
     }
