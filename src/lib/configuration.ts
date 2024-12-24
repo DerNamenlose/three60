@@ -4,6 +4,10 @@ let allowedDomains: string[]
 
 export const config = {
 
+    get enableRegister() {
+        return env.ENABLE_REGISTER === 'true';
+    },
+
     get allowableDomains() {
         if (!allowedDomains) {
             allowedDomains = env.ALLOWABLE_DOMAINS?.split(',') ?? [];

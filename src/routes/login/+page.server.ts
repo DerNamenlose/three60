@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { createSession, setSessionTokenCookie } from '../../lib/session/session';
 import { db } from '../../db';
 import { usersTable } from '../../db/schema';
@@ -9,8 +9,15 @@ import { verify } from '@node-rs/argon2';
 import { generateRandomToken } from '$lib/randomToken';
 
 import debug from 'debug';
+import { config } from '$lib/configuration';
 
 let log = debug('login');
+
+export const load: PageServerLoad = () => {
+    return {
+        enableRegister: config.enableRegister
+    }
+}
 
 export const actions = {
     default: async (event) => {

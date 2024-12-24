@@ -31,6 +31,6 @@ export const actions = {
             sendVerificationEmail(email, result.verificationCode);
         }
 
-        redirect(303, '/login');
+        redirect(303, '/register/success');
     }
 } satisfies Actions;

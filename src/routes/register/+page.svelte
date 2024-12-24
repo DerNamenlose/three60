@@ -1,11 +1,13 @@
 <script lang="ts">
+	import Navbar from '$lib/components/Navbar.svelte';
+
 	let password = $state('');
 	let password_repeat = $state('');
 
 	const { data } = $props();
 </script>
 
-<h1 class="text-3xl">Register a new Account</h1>
+<Navbar title="Register a new Account" />
 <div>
 	<form class="grid grid-cols-2 gap-1" method="POST">
 		<label for="name" class="justify-self-end"
