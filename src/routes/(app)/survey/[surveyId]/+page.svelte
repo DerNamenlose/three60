@@ -10,6 +10,7 @@
 	import TrashIcon from '$lib/components/icons/TrashIcon.svelte';
 	import { goto } from '$app/navigation';
 	import { success } from '$lib/toast';
+	import MarkdownBlock from '$lib/components/MarkdownBlock.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -59,7 +60,7 @@
 	</div>
 </Navbar>
 {#if data.description}
-	<div class="ml-4 text-xs text-slate-500">{data.description}</div>
+	<MarkdownBlock class="ml-4 mt-4 text-xs text-slate-500" value={data.description} />
 {/if}
 
 <h2 class="ml-2 mt-4 text-2xl">Participants</h2>

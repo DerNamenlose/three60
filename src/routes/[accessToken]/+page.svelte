@@ -1,4 +1,5 @@
 <script lang="ts">
+	import MarkdownBlock from '$lib/components/MarkdownBlock.svelte';
 	import Skills from '$lib/Skills.svelte';
 
 	import type { PageData } from './$types';
@@ -20,7 +21,7 @@
 	<h1 class="justify-self-start text-3xl">{data.title}</h1>
 </nav>
 {#if data.description}
-	<div class="ml-4 text-sm text-slate-500">{data.description}</div>
+	<MarkdownBlock class="ml-4 mt-4 text-sm text-slate-500" value={data.description} />
 {/if}
 <form method="POST" class="text-center">
 	<Skills bind:skills />
