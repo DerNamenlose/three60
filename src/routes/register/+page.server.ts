@@ -11,6 +11,10 @@ export const load: PageServerLoad = () => {
     }
 }
 
+function getBaseUrl(requestUrl: URL) {
+    return `${requestUrl.protocol}//${requestUrl.host}`
+}
+
 export const actions = {
     default: async (event) => {
         const formData = await event.request.formData();
@@ -28,7 +32,7 @@ export const actions = {
         const result = await createNewUser(email, password);
 
         if (result.verificationCode) {
-            sendVerificationEmail(email, result.verificationCode);
+            sendVerificationEmail(email, result.verificationCode, getBaseUrl(event.url));
         }
 
         redirect(303, '/register/success');

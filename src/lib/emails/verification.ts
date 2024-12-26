@@ -1,12 +1,12 @@
 import type { Email, VerificationCode } from "$lib/types";
 import { sendEmail } from ".";
 
-export function sendVerificationEmail(email: Email, verificationCode: VerificationCode) {
+export function sendVerificationEmail(email: Email, verificationCode: VerificationCode, baseUrl: string) {
     sendEmail(email, 'Welcome to Three60 surveys', `Hello,
         
 please confirm your account email address by clicking the link below:
 
-        http://localhost:5173/verify/${verificationCode}
+        ${baseUrl}/verify/${verificationCode}
 
 Thank you.
 
