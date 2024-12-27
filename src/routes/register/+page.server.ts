@@ -35,6 +35,6 @@ export const actions = {
             sendVerificationEmail(email, result.verificationCode, getBaseUrl(event.url));
         }
 
-        redirect(303, '/register/success');
+        redirect(303, 'register/success');
     }
 } satisfies Actions;

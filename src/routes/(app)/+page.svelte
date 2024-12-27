@@ -16,7 +16,7 @@
 		{#each data.surveys as survey}
 			<li class="grid grid-cols-2">
 				<div>
-					<Link href="/survey/{survey.id}">{survey.title}</Link>
+					<Link href="survey/{survey.id}">{survey.title}</Link>
 					<span class="mr-5 inline-block">
 						({survey.fillRate.filled}/{survey.fillRate.expected})
 						{#if survey.fillRate.filled === survey.fillRate.expected}
@@ -26,7 +26,7 @@
 				</div>
 				<div>
 					<Link
-						href="/survey/new?from={survey.id}"
+						href="survey/new?from={survey.id}"
 						class="ml-2 inline-block hover:bg-slate-200"
 						title="Duplicate survey"
 						aria-label="Duplicate survey"
@@ -37,5 +37,5 @@
 		{/each}
 	</ul>
 
-	<Link href="/survey/new">Create a new Survey</Link>
+	<Link href="survey/new">Create a new Survey</Link>
 </div>

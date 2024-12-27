@@ -18,7 +18,7 @@
 		>
 		{#if data.enableRegister}
 			<span class="col-span-2 mt-3 justify-self-center text-xs">
-				<Link href="/register">Click here to register</Link>, if you do not have an account yet</span
+				<Link href="../register">Click here to register</Link>, if you do not have an account yet</span
 			>
 		{/if}
 	</form>

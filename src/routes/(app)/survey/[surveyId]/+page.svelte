@@ -32,7 +32,7 @@
 		await fetch('', {
 			method: 'DELETE'
 		});
-		goto('/');
+		goto('..');
 	}
 </script>
 
@@ -42,7 +42,7 @@
 			<HomeIcon />
 		</a>
 		<a
-			href="/survey/new?from={data.id}"
+			href="../survey/new?from={data.id}"
 			class="ml-2 flex items-center"
 			aria-label="Duplicate"
 			title="Duplicate"

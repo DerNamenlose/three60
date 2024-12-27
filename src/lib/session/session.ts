@@ -37,7 +37,7 @@ export function setSessionTokenCookie(event: RequestEvent, token: string, expire
         httpOnly: true,
         sameSite: "lax",
         expires: expiresAt,
-        path: "/"
+        path: "/" // TODO this should be limited to the path the application is running on
     });
 }
 
@@ -46,6 +46,6 @@ export function deleteSessionTokenCookie(event: RequestEvent): void {
         httpOnly: true,
         sameSite: "lax",
         maxAge: 0,
-        path: "/"
+        path: "/" // TODO this should be limited to the path the application is running on
     });
 }

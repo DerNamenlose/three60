@@ -7,6 +7,7 @@
 
 <Navbar title="Verification successful" />
 <div>
-	Congratulations! You've successfully verified your account. <Link href="/login">Click here</Link> to
-	log in.
+	Congratulations! You've successfully verified your account. <Link href="../../login"
+		>Click here</Link
+	> to log in.
 </div>

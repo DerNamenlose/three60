@@ -12,6 +12,6 @@
 		An email has been sent to your email address to activate the account. Please follow the
 		instructions in the email to be able to log in.
 	{:else}
-		Click <Link href="/login">here</Link> to log in.
+		Click <Link href="../../login">here</Link> to log in.
 	{/if}
 </p>

@@ -49,7 +49,7 @@ export const actions = {
                 redirect(303, redirect_uri);
             }
             else {
-                redirect(303, '/');
+                redirect(303, '.');
             }
         }
         else {
