@@ -21,8 +21,12 @@ export async function createSession(token: string, userId: number) {
 export async function validateSession(token: string) {
     const session = await db.select().from(sessions).where(eq(sessions.token, token)).limit(1);
     if (session[0] && session[0].expires > Date.now()) {
-        db.update(sessions).set({ expires: Date.now() + 600 * 1000 }).where(eq(sessions.token, token)); // refresh the session as long as the user is working in it
-        return session[0];
+        const newExpires = Date.now() + 600 * 1000;
+        db.update(sessions).set({ expires: newExpires }).where(eq(sessions.token, token)); // refresh the session as long as the user is working in it
+        return {
+            ...session[0],
+            expires: newExpires
+        };
     }
     await db.delete(sessions).where(lt(sessions.expires, Date.now())); // clean up
     return null;
