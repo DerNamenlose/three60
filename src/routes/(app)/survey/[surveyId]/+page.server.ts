@@ -1,12 +1,13 @@
-import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import { error, redirect } from '@sveltejs/kit';
+import type { PageServerLoad, RouteParams } from './$types';
 import { loadSurvey } from '$lib/queries';
 
 import debug from 'debug';
+import { deleteAnswers } from '../../../../db/answers';
 
 const log = debug('survey:admin');
 
-export const load: PageServerLoad = async ({ params, locals }) => {
+async function loadSurveyData(params: RouteParams, locals: App.Locals) {
     const surveyId = parseInt(params.surveyId);
 
     if (isNaN(surveyId)) {
@@ -24,4 +25,26 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         error(404, 'Survey not found');
     }
     return surveyData;
+}
+
+export const load: PageServerLoad = async ({ params, locals }) => {
+    return await loadSurveyData(params, locals);
+}
+
+export const actions = {
+    deleteAnswers: async ({ params, locals, request }) => {
+        const survey = await loadSurveyData(params, locals);
+
+        let formData = await request.formData();
+        const participantId = parseInt(formData.get('participantId')?.toString() ?? '');
+
+        if (isNaN(participantId)) {
+            log('Invalid participant ID when trying to delete answers: %s', formData.get('participandId')?.toString());
+            error(400, 'Invalid participant ID');
+        }
+
+        await deleteAnswers(participantId);
+
+        redirect(303, survey.id.toString());
+    }
 }

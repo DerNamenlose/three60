@@ -24,7 +24,7 @@ export const load: PageServerLoad = async ({ params, url }) => {
 
     if (await db.$count(surveyAnswersTable, eq(surveyAnswersTable.participantId, results[0].survey_access_table.id)) > 0) {
         log_load('Answers already submitted: %s', params.accessToken);
-        error(400, 'Answers already submitted');
+        error(400, 'You have already submitted your answers. If you feel that this is wrong, please contact the survey creator to reset your answers.');
     }
 
     const survey = results[0].surveys_table;
@@ -57,7 +57,7 @@ export const actions = {
 
         if (await db.$count(surveyAnswersTable, eq(surveyAnswersTable.participantId, results[0].survey_access_table.id)) > 0) {
             log_store('Answers already submitted: %s', params.accessToken);
-            error(400, 'Answers already submitted');
+            error(400, 'You have already submitted your answers. If you feel that this is wrong, please contact the survey creator to reset your answers.');
         }
 
         const survey = results[0].surveys_table;

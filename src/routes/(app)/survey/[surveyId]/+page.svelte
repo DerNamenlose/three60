@@ -11,6 +11,9 @@
 	import { goto } from '$app/navigation';
 	import { success } from '$lib/toast';
 	import MarkdownBlock from '$lib/components/MarkdownBlock.svelte';
+	import MenuIcon from '$lib/components/icons/MenuIcon.svelte';
+	import DeleteIcon from '$lib/components/icons/DeleteIcon.svelte';
+	import WarningDialog from '$lib/components/WarningDialog.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -26,7 +29,10 @@
 		navigator.clipboard.writeText(link);
 	}
 
-	let dialogRef: HTMLDialogElement | null = null;
+	let deleteSurveyDialogRef: HTMLDialogElement | null = $state(null);
+	let deleteAnswersDialogRef: HTMLDialogElement | null = $state(null);
+
+	let participantAnswersDeletionCandidateId = $state<number | null>(null);
 
 	async function deleteSurvey() {
 		await fetch('', {
@@ -50,7 +56,7 @@
 		</a>
 		<button
 			onclick={() => {
-				dialogRef?.showModal();
+				deleteSurveyDialogRef?.showModal();
 			}}
 			class="ml-2 inline-block"
 			aria-label="Delete"
@@ -84,6 +90,19 @@
 			>
 				<LinkIcon />
 			</button>
+			{#if participant.answers.length > 0}
+				<button
+					aria-label="Reset ratings"
+					title="Clear answers"
+					class="text-red-500 hover:bg-slate-200"
+					onclick={() => {
+						participantAnswersDeletionCandidateId = participant.id;
+						deleteAnswersDialogRef?.showModal();
+					}}
+				>
+					<DeleteIcon />
+				</button>
+			{/if}
 		</li>
 	{/each}
 </ul>
@@ -92,20 +111,27 @@
 	<Diagram data={diagramData} />
 </div>
 
-<dialog
-	bind:this={dialogRef}
-	class="border-2 border-red-300 p-4 backdrop:bg-black/40 backdrop:backdrop-blur-sm"
->
-	<h2 class="mb-4 text-2xl">Delete survey</h2>
-	<p>
-		Are you sure you want to delete the survey. <span class="font-bold text-red-400"
-			>This action cannot be undone.</span
-		>
-	</p>
-	<div class="mt-4 grid grid-cols-2 gap-2">
-		<button onclick={() => dialogRef?.close()} class="w-40 justify-self-end bg-slate-400"
-			>Cancel</button
-		>
-		<button class="w-40 bg-red-500" onclick={deleteSurvey}>Delete</button>
-	</div>
-</dialog>
+<WarningDialog title="Delete survey" bind:dialogRef={deleteSurveyDialogRef} onAccept={deleteSurvey}>
+	<p>Are you sure you want to delete the survey.</p>
+	<p class="font-bold text-red-400">This action cannot be undone.</p>
+</WarningDialog>
+
+<WarningDialog title="Delete answers" onAccept={() => {}} bind:dialogRef={deleteAnswersDialogRef}>
+	<form id="delete-answers" method="POST" action="?/deleteAnswers">
+		<input type="hidden" name="participantId" value={participantAnswersDeletionCandidateId} />
+		<p>
+			Are you sure you want to remove this user's ratings? This will delete whatever answers the
+			user has given and allow them to submit new ratings instead.
+		</p>
+		<p class="font-bold text-red-400">This action cannot be undone.</p>
+	</form>
+	{#snippet buttons()}
+		<div class="mt-4 grid grid-cols-2 gap-2">
+			<button
+				onclick={() => deleteAnswersDialogRef?.close()}
+				class="w-40 justify-self-end bg-slate-400">Cancel</button
+			>
+			<button class="w-40 bg-red-500" form="delete-answers">Delete</button>
+		</div>
+	{/snippet}
+</WarningDialog>
