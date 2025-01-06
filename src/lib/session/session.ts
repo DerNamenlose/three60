@@ -8,10 +8,16 @@ export type Session = {
     expires: number; // Millisecond UNIX timestamp
 }
 
+const sessionSeconds = 1800;
+
+function getExpiryTime() {
+    return Date.now() + sessionSeconds * 1000;
+}
+
 export async function createSession(token: string, userId: number) {
     const session = {
         userId,
-        expires: Date.now() + 600 * 1000 // 600 seconds
+        expires: getExpiryTime()
     }
     await db.insert(sessions).values({ token, userId, expires: session.expires });
     return session;
@@ -21,7 +27,7 @@ export async function createSession(token: string, userId: number) {
 export async function validateSession(token: string) {
     const session = await db.select().from(sessions).where(eq(sessions.token, token)).limit(1);
     if (session[0] && session[0].expires > Date.now()) {
-        const newExpires = Date.now() + 600 * 1000;
+        const newExpires = getExpiryTime();
         db.update(sessions).set({ expires: newExpires }).where(eq(sessions.token, token)); // refresh the session as long as the user is working in it
         return {
             ...session[0],
