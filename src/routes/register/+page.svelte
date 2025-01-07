@@ -1,8 +1,9 @@
 <script lang="ts">
 	import Navbar from '$lib/components/Navbar.svelte';
+	import PasswordSetterFormPart from '$lib/components/PasswordSetterFormPart.svelte';
 
-	let password = $state('');
-	let password_repeat = $state('');
+	let password = $state();
+	let password_repeat = $state();
 
 	const { data } = $props();
 </script>
@@ -19,24 +20,7 @@
 			{/if}
 		</label>
 		<input type="email" name="email" id="email" class="justify-self-start" required />
-		<label for="password" class="justify-self-end">Password</label>
-		<input
-			type="password"
-			name="password"
-			id="password"
-			class="justify-self-start"
-			required
-			bind:value={password}
-		/>
-		<label for="password_repeat" class="justify-self-end">Password</label>
-		<input
-			type="password"
-			name="password_repeat"
-			id="password_repeat"
-			class="justify-self-start"
-			required
-			bind:value={password_repeat}
-		/>
+		<PasswordSetterFormPart bind:password bind:password_repeat />
 		<button
 			type="submit"
 			class="col-span-2 w-40 justify-self-center bg-slate-200"

@@ -1,7 +1,7 @@
 import { config } from "$lib/configuration";
 import { generateRandomToken } from "$lib/randomToken";
 import type { Email, Password, VerificationCode } from "$lib/types";
-import { hash } from "@node-rs/argon2";
+import { hash, verify } from "@node-rs/argon2";
 import { db } from ".";
 import { usersTable } from "./schema";
 import { eq } from "drizzle-orm";
@@ -34,6 +34,22 @@ export async function createNewUser(email: Email, password: Password): Promise<{
     return {
         verificationCode
     }
+}
+
+export async function loadUser(id: number) {
+    const user = await db.select().from(usersTable).where(eq(usersTable.id, id)).limit(1);
+    if (user.length === 0) {
+        return null;
+    }
+    return {
+        id: user[0].id,
+        email: user[0].email as Email,
+        password_hash: user[0].password_hash
+    }
+}
+
+export async function verifyPassword(password: Password, password_hash: string) {
+    return await verify(password_hash, password);
 }
 
 export enum VerificationError {

@@ -6,9 +6,30 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import CheckIcon from '$lib/components/icons/CheckIcon.svelte';
 	import DuplicateIcon from '$lib/components/icons/DuplicateIcon.svelte';
+	import { page } from '$app/state';
+	import { toast } from '@zerodevx/svelte-toast';
+	import { goto } from '$app/navigation';
+	import ProfileIcon from '$lib/components/icons/ProfileIcon.svelte';
+
+	$effect(() => {
+		if (page.url.searchParams.get('pwd_updated') === 'true') {
+			toast.push('Password update successful', {
+				theme: {
+					'--toastProgressBackground': 'green'
+				},
+				onpop: () => {
+					goto('/');
+				}
+			});
+		}
+	});
 </script>
 
-<Navbar title="Dashboard" />
+<Navbar title="Dashboard">
+	<div class="w-30 flex flex-row justify-self-end">
+		<a href="passwordChange" title="Change password"><ProfileIcon /></a>
+	</div>
+</Navbar>
 
 <div class="p-4">
 	<h2 class="text-2xl">Surveys you own</h2>
