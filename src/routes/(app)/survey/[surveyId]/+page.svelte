@@ -11,9 +11,9 @@
 	import { goto } from '$app/navigation';
 	import { success } from '$lib/toast';
 	import MarkdownBlock from '$lib/components/MarkdownBlock.svelte';
-	import MenuIcon from '$lib/components/icons/MenuIcon.svelte';
 	import DeleteIcon from '$lib/components/icons/DeleteIcon.svelte';
 	import WarningDialog from '$lib/components/WarningDialog.svelte';
+	import EditIcon from '$lib/components/icons/EditIcon.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -43,7 +43,7 @@
 </script>
 
 <Navbar title={data.title}>
-	<div class="flex w-20 flex-row justify-self-end">
+	<div class="w-30 flex flex-row justify-self-end">
 		<a href="/" class="flex items-center" aria-label="Home" title="Home">
 			<HomeIcon />
 		</a>
@@ -53,6 +53,13 @@
 			aria-label="Duplicate"
 			title="Duplicate"
 			><DuplicateIcon />
+		</a>
+		<a
+			href="{data.id.toString()}/edit"
+			class="ml-2 flex items-center"
+			aria-label="Edit survey"
+			title="Edit survey"
+			><EditIcon />
 		</a>
 		<button
 			onclick={() => {
