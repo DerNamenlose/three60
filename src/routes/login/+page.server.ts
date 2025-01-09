@@ -6,10 +6,10 @@ import { usersTable } from '../../db/schema';
 import { eq } from 'drizzle-orm';
 import { error } from '@sveltejs/kit';
 import { verify } from '@node-rs/argon2';
-import { generateRandomToken } from '$lib/randomToken';
 
 import debug from 'debug';
 import { config } from '$lib/configuration';
+import { generateRandomToken } from '$lib/helpers/shared/randomToken';
 
 let log = debug('login');
 

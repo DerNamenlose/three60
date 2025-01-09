@@ -1,5 +1,6 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
+import type { UserId } from "$lib/types";
 import { Session } from "./lib/session/session";
 
 // for information about these interfaces
@@ -8,7 +9,7 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			session: Session | null,
-			userId: number | null
+			userId: UserId | null
 		}
 		// interface PageData {}
 		// interface PageState {}

@@ -1,4 +1,4 @@
-import { index, int, primaryKey, mysqlTable, text, varchar, bigint, date } from "drizzle-orm/mysql-core";
+import { index, int, primaryKey, mysqlTable, text, varchar, bigint, date, unique } from "drizzle-orm/mysql-core";
 
 export const usersTable = mysqlTable("users_table", {
     id: int().autoincrement().primaryKey(),
@@ -43,4 +43,15 @@ export const surveyAnswersTable = mysqlTable("survey_answers_table", {
     rating: int().notNull(),
 }, (table) => ({
     pk: primaryKey({ columns: [table.participantId, table.skillId] }),
+}));
+
+export const surveyPermissionsTable = mysqlTable("survey_permissions_table", {
+    id: int().autoincrement().primaryKey(),
+    surveyId: int().notNull().references(() => surveysTable.id, { onDelete: "cascade" }),
+    user: int().references(() => usersTable.id, { onDelete: "cascade" }), // NULL means "any user"
+    access: int().notNull(),
+}, (table) => ({
+    userIndex: index("user_index").on(table.user),
+    surveyIndex: index("survey_index").on(table.surveyId),
+    survey_user_un: unique("survey_user_un").on(table.surveyId, table.user),
 }));

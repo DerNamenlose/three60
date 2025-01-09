@@ -38,12 +38,14 @@
 			<li class="grid grid-cols-2">
 				<div>
 					<Link href="survey/{survey.id}">{survey.title}</Link>
-					<span class="mr-5 inline-block">
-						({survey.fillRate.filled}/{survey.fillRate.expected})
-						{#if survey.fillRate.filled === survey.fillRate.expected && survey.fillRate.expected > 0}
-							<CheckIcon />
-						{/if}
-					</span>
+					{#if survey.fillRate}
+						<span class="mr-5 inline-block">
+							({survey.fillRate.filled}/{survey.fillRate.expected})
+							{#if survey.fillRate.filled === survey.fillRate.expected && survey.fillRate.expected > 0}
+								<CheckIcon />
+							{/if}
+						</span>
+					{/if}
 				</div>
 				<div>
 					<Link

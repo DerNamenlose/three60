@@ -22,6 +22,13 @@
       "when": 1734972757800,
       "tag": "0002_sweet_mentallo",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1736628358111,
+      "tag": "0003_overjoyed_shooting_star",
+      "breakpoints": true
     }
   ]
 }

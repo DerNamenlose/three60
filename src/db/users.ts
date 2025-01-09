@@ -1,19 +1,14 @@
 import { config } from "$lib/configuration";
-import { generateRandomToken } from "$lib/randomToken";
-import type { Email, Password, VerificationCode } from "$lib/types";
+import type { Email, Password, User, UserId, VerificationCode } from "$lib/types";
 import { hash, verify } from "@node-rs/argon2";
 import { db } from ".";
 import { usersTable } from "./schema";
 import { eq } from "drizzle-orm";
 import { err, ok, type Result } from "$lib/result";
 import debug from "debug";
+import { generateRandomToken } from "$lib/helpers/shared/randomToken";
 
 const log = debug('db:users');
-
-export type User = {
-    id: number;
-    email: Email;
-}
 
 export async function createNewUser(email: Email, password: Password): Promise<{ verificationCode: VerificationCode | undefined }> {
     const hashedPassword = await hash(password);
@@ -71,7 +66,7 @@ export async function verifyUser(verificationCode: VerificationCode): Promise<Re
     await db.update(usersTable).set({ verification_code: null, verifcationCodeExpires: null }).where(eq(usersTable.verification_code, verificationCode));
 
     return ok({
-        id: user[0].id,
+        id: user[0].id as UserId,
         email: user[0].email as Email
     });
 }

@@ -2,6 +2,7 @@ import { db } from '../../db';
 import { sessions } from '../../db/schema';
 import { eq, lt } from 'drizzle-orm';
 import type { RequestEvent } from '@sveltejs/kit';
+import type { UserId } from '$lib/types';
 
 export type Session = {
     userId: number;
@@ -31,6 +32,7 @@ export async function validateSession(token: string) {
         db.update(sessions).set({ expires: newExpires }).where(eq(sessions.token, token)); // refresh the session as long as the user is working in it
         return {
             ...session[0],
+            userId: session[0].userId as UserId,
             expires: newExpires
         };
     }

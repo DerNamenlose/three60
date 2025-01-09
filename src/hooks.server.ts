@@ -3,6 +3,7 @@ import type { Handle } from "@sveltejs/kit";
 import { deleteSessionTokenCookie, setSessionTokenCookie, validateSession } from "./lib/session/session";
 
 import debug from 'debug';
+import type { UserId } from "$lib/types";
 
 const log = debug('hooks');
 
@@ -23,6 +24,6 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
 
     event.locals.session = session;
-    event.locals.userId = session?.userId ?? null;
+    event.locals.userId = session?.userId as UserId ?? null;
     return resolve(event);
 };

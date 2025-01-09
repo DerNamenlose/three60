@@ -6,5 +6,5 @@ export const db = drizzle(
     env.DATABASE_URL ?? '',
     {
         schema,
-        mode: 'default'
+        mode: 'default',
     });

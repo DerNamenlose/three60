@@ -14,6 +14,9 @@
 	import DeleteIcon from '$lib/components/icons/DeleteIcon.svelte';
 	import WarningDialog from '$lib/components/WarningDialog.svelte';
 	import EditIcon from '$lib/components/icons/EditIcon.svelte';
+	import ShareIcon from '$lib/components/icons/ShareIcon.svelte';
+	import { checkAccess } from '$lib/helpers/shared/permissions';
+	import { AccessLevel, type ParticipantId } from '$lib/types';
 
 	let { data }: { data: PageData } = $props();
 
@@ -21,14 +24,14 @@
 		if (data.participants.length > 0) {
 			return data.participants.map((participant) => ({
 				skill: skill.title,
-				participant: participant.id,
+				participant: participant.id as ParticipantId,
 				rating: participant.answers.find((answer) => answer.skillId === skill.id)?.rating
 			}));
 		} else {
 			// fallback pseudo participant because empty diagram data will break the diagram and make the survey page unaccessible
 			return {
 				skill: skill.title,
-				participant: -1,
+				participant: -1 as ParticipantId,
 				rating: undefined
 			};
 		}
@@ -43,6 +46,8 @@
 
 	let participantAnswersDeletionCandidateId = $state<number | null>(null);
 
+	$inspect(data);
+
 	async function deleteSurvey() {
 		await fetch('', {
 			method: 'DELETE'
@@ -56,29 +61,43 @@
 		<a href="/" class="flex items-center" aria-label="Home" title="Home">
 			<HomeIcon />
 		</a>
-		<a
-			href="../survey/new?from={data.id}"
-			class="ml-2 flex items-center"
-			aria-label="Duplicate"
-			title="Duplicate"
-			><DuplicateIcon />
-		</a>
-		<a
-			href="{data.id.toString()}/edit"
-			class="ml-2 flex items-center"
-			aria-label="Edit survey"
-			title="Edit survey"
-			><EditIcon />
-		</a>
-		<button
-			onclick={() => {
-				deleteSurveyDialogRef?.showModal();
-			}}
-			class="ml-2 inline-block"
-			aria-label="Delete"
-			title="Delete"
-			><TrashIcon />
-		</button>
+		{#if checkAccess(data, AccessLevel.Clone)}
+			<a
+				href="../survey/new?from={data.id}"
+				class="ml-2 flex items-center"
+				aria-label="Duplicate"
+				title="Duplicate"
+				><DuplicateIcon />
+			</a>
+		{/if}
+		{#if checkAccess(data, AccessLevel.Edit)}
+			<a
+				href="{data.id.toString()}/edit"
+				class="ml-2 flex items-center"
+				aria-label="Edit survey"
+				title="Edit survey"
+				><EditIcon />
+			</a>
+		{/if}
+		{#if checkAccess(data, AccessLevel.Owner)}
+			<a
+				href="{data.id.toString()}/share"
+				class="ml-2 flex items-center"
+				aria-label="Share"
+				title="Share survey with other users"
+			>
+				<ShareIcon />
+			</a>
+			<button
+				onclick={() => {
+					deleteSurveyDialogRef?.showModal();
+				}}
+				class="ml-2 inline-block"
+				aria-label="Delete"
+				title="Delete"
+				><TrashIcon />
+			</button>
+		{/if}
 	</div>
 </Navbar>
 {#if data.description}
@@ -95,17 +114,19 @@
 					<CheckIcon />
 				{/if}
 			</span>
-			<button
-				aria-label="Copy link to clipboard"
-				class="text-sky-700"
-				title="Copy link to clipboard"
-				onclick={() => {
-					copyLinkToClipboard(`${window.location.origin}/${participant.accessToken}`);
-					success('Link copied to clipboard');
-				}}
-			>
-				<LinkIcon />
-			</button>
+			{#if participant.accessToken}
+				<button
+					aria-label="Copy link to clipboard"
+					class="text-sky-700"
+					title="Copy link to clipboard"
+					onclick={() => {
+						copyLinkToClipboard(`${window.location.origin}/${participant.accessToken}`);
+						success('Link copied to clipboard');
+					}}
+				>
+					<LinkIcon />
+				</button>
+			{/if}
 			{#if participant.answers.length > 0}
 				<button
 					aria-label="Reset ratings"
@@ -123,9 +144,13 @@
 	{/each}
 </ul>
 
-<div class="grid grid-cols-1 justify-items-center">
-	<Diagram data={diagramData} />
-</div>
+{#if checkAccess(data, AccessLevel.ReadResult)}
+	<div class="grid grid-cols-1 justify-items-center">
+		<Diagram data={diagramData} />
+	</div>
+{:else}
+	<div class="text-center">You do not have permission to see the survey results</div>
+{/if}
 
 <WarningDialog title="Delete survey" bind:dialogRef={deleteSurveyDialogRef} onAccept={deleteSurvey}>
 	<p>Are you sure you want to delete the survey.</p>
