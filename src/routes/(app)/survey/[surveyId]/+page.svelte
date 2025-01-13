@@ -17,13 +17,22 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const diagramData = data.skills.flatMap((skill) =>
-		data.participants.map((participant) => ({
-			skill: skill.title,
-			participant: participant.id,
-			rating: participant.answers.find((answer) => answer.skillId === skill.id)?.rating
-		}))
-	);
+	const diagramData = data.skills.flatMap((skill) => {
+		if (data.participants.length > 0) {
+			return data.participants.map((participant) => ({
+				skill: skill.title,
+				participant: participant.id,
+				rating: participant.answers.find((answer) => answer.skillId === skill.id)?.rating
+			}));
+		} else {
+			// fallback pseudo participant because empty diagram data will break the diagram and make the survey page unaccessible
+			return {
+				skill: skill.title,
+				participant: -1,
+				rating: undefined
+			};
+		}
+	});
 
 	function copyLinkToClipboard(link: string) {
 		navigator.clipboard.writeText(link);

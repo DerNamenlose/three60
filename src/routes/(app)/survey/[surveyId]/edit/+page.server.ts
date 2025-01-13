@@ -5,7 +5,7 @@ import debug from 'debug';
 import { fromFormData } from '$lib/survey';
 import { db } from '../../../../../db';
 import { surveyAccessTable, surveyAnswersTable, surveySkillsTable, surveysTable } from '../../../../../db/schema';
-import { eq, inArray } from 'drizzle-orm';
+import { eq, inArray, and } from 'drizzle-orm';
 import { addParticipant, addSkill, loadSurveyData } from '../../../../../db/survey';
 
 const log = debug('survey:admin:edit');
@@ -58,10 +58,13 @@ export const actions = {
         // update the participants where applicable (unchanged participants are left untouched)
         const deletedParticipants = survey.participants.filter(participant => !participants.includes(participant.email));
         const newParticipants = participants.filter(email => !survey.participants.some(candidate => candidate.email === email));
-        // delete all participants no longer part of the survey
-        await db.delete(surveyAccessTable).where(inArray(surveyAccessTable.recepientEmail, deletedParticipants.map(participant => participant.email)));
-        // delete answers from deleted participants
-        await db.delete(surveyAnswersTable).where(inArray(surveyAnswersTable.participantId, deletedParticipants.map(participant => participant.id)));
+        // delete all participants no longer part of the survey (this should also delete their answers via cascade delete)
+        await db.delete(surveyAccessTable).where(
+            and(
+                eq(surveyAccessTable.surveyId, survey.id),
+                inArray(surveyAccessTable.recepientEmail, deletedParticipants.map(participant => participant.email))
+            )
+        );
         // add any new participants
         for (const newParticipant of newParticipants) {
             await addParticipant(survey.id, newParticipant);

@@ -40,7 +40,7 @@
 					<Link href="survey/{survey.id}">{survey.title}</Link>
 					<span class="mr-5 inline-block">
 						({survey.fillRate.filled}/{survey.fillRate.expected})
-						{#if survey.fillRate.filled === survey.fillRate.expected}
+						{#if survey.fillRate.filled === survey.fillRate.expected && survey.fillRate.expected > 0}
 							<CheckIcon />
 						{/if}
 					</span>
