@@ -4,7 +4,11 @@ import { surveysTable } from "../../../../db/schema";
 import { eq } from "drizzle-orm";
 
 
-export const DELETE: RequestHandler = async ({ params }) => {
+export const DELETE: RequestHandler = async ({ params, locals }) => {
+    if (!locals.userId) {
+        return new Response(null, { status: 403 });
+    }
+
     const surveyId = parseInt(params.surveyId ?? '');
 
     if (isNaN(surveyId)) {
