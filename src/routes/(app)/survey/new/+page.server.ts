@@ -23,7 +23,7 @@ export const actions = {
     default: async (event) => {
         const owner = event.locals.userId;
         if (!owner) {
-            error(400, 'User is not logged in');
+            error(403, 'User is not logged in');
         }
 
         const formData = await event.request.formData();
@@ -44,7 +44,7 @@ export const actions = {
 
         const surveyId = ids[0].id as SurveyId;
         // insert the owner permission for this survey
-        db.insert(surveyPermissionsTable).values({ surveyId, user: owner, access: AccessLevel.Owner });
+        await db.insert(surveyPermissionsTable).values({ surveyId, user: owner, access: AccessLevel.Owner });
         // record all participants & skills
         for (const participant of participants) {
             await addParticipant(surveyId, participant);
