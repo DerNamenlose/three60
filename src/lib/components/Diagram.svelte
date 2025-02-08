@@ -4,11 +4,12 @@
 	import { flatGroup } from 'd3-array';
 	import { Axis, Chart, Points, Spline, Svg } from 'layerchart';
 
-	const {
-		data
-	}: {
+	type Props = {
+		reviewMode: boolean;
 		data: { skill: string; participant: number; rating: number | undefined }[];
-	} = $props();
+	};
+
+	const { data, reviewMode }: Props = $props();
 
 	const averageValues = flatGroup(data, (d) => d.skill)
 		.map(([skill, ratings]) => {
@@ -34,6 +35,15 @@
 		{ stroke: 'stroke-cyan-300', fill: 'fill-cyan-400' },
 		{ stroke: 'stroke-pink-300', fill: 'fill-pink-400' }
 	];
+
+	const anonymousColor = { stroke: 'stroke-slate-300', fill: 'fill-slate-400' };
+
+	function getColor(idx: number) {
+		if (reviewMode) {
+			return anonymousColor;
+		}
+		return colors[idx % colors.length];
+	}
 </script>
 
 <div class="chart-container">
@@ -59,13 +69,9 @@
 				<Spline
 					data={[...ratings, ratings[0]]}
 					curve={curveLinear}
-					class="{colors[idx % colors.length].stroke} stroke-[2px]"
+					class="{getColor(idx).stroke} stroke-[2px]"
 				/>
-				<Points
-					data={ratings}
-					class="{colors[idx % colors.length].stroke} {colors[idx % colors.length]
-						.fill} stroke-[2px]"
-				/>
+				<Points data={ratings} class="{getColor(idx).stroke} {getColor(idx).fill} stroke-[2px]" />
 			{/each}
 			<Spline
 				data={[...averageValues, averageValues[0]]}

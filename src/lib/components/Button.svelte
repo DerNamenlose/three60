@@ -11,7 +11,7 @@
 		primary: 'bg-sky-200 hover:bg-sky-300 text-black border border-black rounded',
 		secondary: 'bg-slate-200 hover:bg-slate-300 text-black border border-black rounded',
 		tertiary: 'bg-white hover:bg-slate-100 text-black border border-slate-500 rounded',
-		ghost: 'bg-white hover:bg-slate-100 text-sky-600'
+		ghost: 'bg-none hover:bg-slate-100 text-sky-600'
 	};
 </script>
 

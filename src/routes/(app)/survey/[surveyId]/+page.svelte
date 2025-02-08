@@ -17,6 +17,9 @@
 	import ShareIcon from '$lib/components/icons/ShareIcon.svelte';
 	import { checkAccess } from '$lib/helpers/shared/permissions';
 	import { AccessLevel, type ParticipantId } from '$lib/types';
+	import Button from '$lib/components/Button.svelte';
+	import EyeSlash from '$lib/components/icons/EyeSlash.svelte';
+	import Eye from '$lib/components/icons/Eye.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -45,8 +48,7 @@
 	let deleteAnswersDialogRef: HTMLDialogElement | null = $state(null);
 
 	let participantAnswersDeletionCandidateId = $state<number | null>(null);
-
-	$inspect(data);
+	let reviewMode = $state(false);
 
 	async function deleteSurvey() {
 		await fetch('', {
@@ -61,6 +63,18 @@
 		<a href="/" class="flex items-center" aria-label="Home" title="Home">
 			<HomeIcon />
 		</a>
+		<Button
+			kind="ghost"
+			class="text-white hover:bg-indigo-900"
+			onclick={() => (reviewMode = !reviewMode)}
+			title={reviewMode ? 'Show details' : 'Hide details'}
+		>
+			{#if reviewMode}
+				<Eye />
+			{:else}
+				<EyeSlash />
+			{/if}
+		</Button>
 		{#if checkAccess(data, AccessLevel.Clone)}
 			<a
 				href="../survey/new?from={data.id}"
@@ -104,49 +118,51 @@
 	<MarkdownBlock class="ml-4 mt-4 text-xs text-slate-500" value={data.description} />
 {/if}
 
-<h2 class="ml-2 mt-4 text-2xl">Participants</h2>
-<ul class="disc ml-4">
-	{#each data.participants as participant}
-		<li>
-			<span class="mr-5">
-				{participant.email}
-				{#if participant.answers.length > 0}
-					<CheckIcon />
+{#if !reviewMode}
+	<h2 class="ml-2 mt-4 text-2xl">Participants</h2>
+	<ul class="disc ml-4">
+		{#each data.participants as participant}
+			<li>
+				<span class="mr-5">
+					{participant.email}
+					{#if participant.answers.length > 0}
+						<CheckIcon />
+					{/if}
+				</span>
+				{#if participant.accessToken}
+					<button
+						aria-label="Copy link to clipboard"
+						class="text-sky-700"
+						title="Copy link to clipboard"
+						onclick={() => {
+							copyLinkToClipboard(`${window.location.origin}/${participant.accessToken}`);
+							success('Link copied to clipboard');
+						}}
+					>
+						<LinkIcon />
+					</button>
 				{/if}
-			</span>
-			{#if participant.accessToken}
-				<button
-					aria-label="Copy link to clipboard"
-					class="text-sky-700"
-					title="Copy link to clipboard"
-					onclick={() => {
-						copyLinkToClipboard(`${window.location.origin}/${participant.accessToken}`);
-						success('Link copied to clipboard');
-					}}
-				>
-					<LinkIcon />
-				</button>
-			{/if}
-			{#if participant.answers.length > 0}
-				<button
-					aria-label="Reset ratings"
-					title="Clear answers"
-					class="text-red-500 hover:bg-slate-200"
-					onclick={() => {
-						participantAnswersDeletionCandidateId = participant.id;
-						deleteAnswersDialogRef?.showModal();
-					}}
-				>
-					<DeleteIcon />
-				</button>
-			{/if}
-		</li>
-	{/each}
-</ul>
+				{#if participant.answers.length > 0}
+					<button
+						aria-label="Reset ratings"
+						title="Clear answers"
+						class="text-red-500 hover:bg-slate-200"
+						onclick={() => {
+							participantAnswersDeletionCandidateId = participant.id;
+							deleteAnswersDialogRef?.showModal();
+						}}
+					>
+						<DeleteIcon />
+					</button>
+				{/if}
+			</li>
+		{/each}
+	</ul>
+{/if}
 
 {#if checkAccess(data, AccessLevel.ReadResult)}
 	<div class="grid grid-cols-1 justify-items-center">
-		<Diagram data={diagramData} />
+		<Diagram data={diagramData} {reviewMode}/>
 	</div>
 {:else}
 	<div class="text-center">You do not have permission to see the survey results</div>
