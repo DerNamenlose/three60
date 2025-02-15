@@ -34,7 +34,7 @@
 <div class="p-4">
 	<h2 class="text-2xl">Surveys you own</h2>
 	<ul class="ml-8 list-disc">
-		{#each data.surveys as survey}
+		{#each data.surveys.sort((a, b) => a.title.localeCompare(b.title)) as survey}
 			<li class="grid grid-cols-2">
 				<div>
 					<Link href="survey/{survey.id}">{survey.title}</Link>

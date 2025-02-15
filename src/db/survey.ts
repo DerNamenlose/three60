@@ -3,7 +3,7 @@ import debug from "debug";
 
 const log = debug('survey:admin:edit');
 
-import { eq, and, inArray, gte, sql } from "drizzle-orm";
+import { eq, or, and, inArray, gte, sql, isNull } from "drizzle-orm";
 import { db } from "../db";
 import { surveyAccessTable, surveyAnswersTable, surveyPermissionsTable, surveySkillsTable, surveysTable, usersTable } from "../db/schema";
 import { AccessLevel, type AccessToken, type Email, type ParticipantId, type SkillId, type SurveyData, type SurveyId, type SurveyMetaData, type UserId } from "$lib/types";
@@ -54,17 +54,27 @@ export async function loadSurveyPermissions(surveyId: SurveyId) {
 
 export async function loadMySurveys(userId: UserId): Promise<SurveyMetaData[]> {
     /// Get all surveys I have access to
-    const mySurves = await db.select()
+    const mySurveys = await db.select()
         .from(surveyPermissionsTable)
         .innerJoin(surveysTable, eq(surveysTable.id, surveyPermissionsTable.surveyId))
-        .where(eq(surveyPermissionsTable.user, userId));
+        .where(or(eq(surveyPermissionsTable.user, userId), isNull(surveyPermissionsTable.user)));
 
-    return mySurves.map(survey => ({
+    // deduplicate the results, always preferring the entry with the direct mention of the given user ID
+    // Note: without the deduplications, surveys shared with "Anyone" would show up twice, if they were also shared directly with a user
+    const deduplicatedResults = new Map<number, (typeof mySurveys)[0]>();
+    for (const result of mySurveys) {
+        const survey = deduplicatedResults.get(result.surveys_table.id);
+        if (!survey?.survey_permissions_table.user) {
+            deduplicatedResults.set(result.surveys_table.id, result);
+        }
+    }
+
+    return [...deduplicatedResults.values().map(survey => ({
         id: survey.surveys_table.id as SurveyId,
         title: survey.surveys_table.title,
         description: survey.surveys_table.description,
         permissions: survey.survey_permissions_table.access,
-    }))
+    }))]
 }
 
 /**
