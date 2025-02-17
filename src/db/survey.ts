@@ -170,7 +170,14 @@ export async function addSkill(surveyId: number, title: string, description: str
 
 /// Check whether a given user has at least the given access level to the given survey. This is based on a database query and doesn't need the survey object already to be loaded
 export async function hasAccess(surveyId: number, userId: number, accessLevel: AccessLevel): Promise<boolean> {
-    const result = await db.select().from(surveyPermissionsTable).where(and(eq(surveyPermissionsTable.surveyId, surveyId), eq(surveyPermissionsTable.user, userId), gte(surveyPermissionsTable.access, accessLevel)));
+    const result = await db.select().from(surveyPermissionsTable).where(
+        and(
+            eq(surveyPermissionsTable.surveyId, surveyId),
+            or(
+                eq(surveyPermissionsTable.user, userId),
+                isNull(surveyPermissionsTable.user)
+            ),
+            gte(surveyPermissionsTable.access, accessLevel)));
     return result.length > 0;
 }
 
