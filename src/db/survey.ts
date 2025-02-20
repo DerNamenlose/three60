@@ -20,7 +20,8 @@ export async function loadSurveyMetadata(surveyId: SurveyId, userId: UserId): Pr
     const surveys = await db.select()
         .from(surveyPermissionsTable)
         .innerJoin(surveysTable, eq(surveysTable.id, surveyPermissionsTable.surveyId))
-        .where(and(eq(surveysTable.id, surveyId), eq(surveyPermissionsTable.user, userId))).limit(1);
+        .where(and(eq(surveysTable.id, surveyId),
+            or(eq(surveyPermissionsTable.user, userId), isNull(surveyPermissionsTable.user)))).limit(1);
 
     if (surveys.length === 0) {
         return null;
