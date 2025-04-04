@@ -1,3 +1,5 @@
+Note: This repository has moved to https://git.geekbetrieb.de/namenlos/three60
+
 # Three60
 
 A very, very simple 360° review tool. Supports self-registration of users and limiting the registration to certain email address domains.
